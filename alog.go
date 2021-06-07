@@ -50,7 +50,7 @@ loop:
 			wg.Add(1)
 			go al.write(msg, wg)
 		case <-al.shutdownCh:
-			wg.Add(1)
+			wg.Wait()
 			al.shutdown()
 			break loop
 		}
@@ -83,8 +83,8 @@ func (al Alog) shutdown() {
 }
 
 // MessageChannel returns a channel that accepts messages that should be written to the log.
-func (al Alog) MessageChannel() chan string {
-	return nil
+func (al Alog) MessageChannel() chan<- string {
+	return al.msgCh
 }
 
 // ErrorChannel returns a channel that will be populated when an error is raised during a write operation.
@@ -98,7 +98,6 @@ func (al Alog) ErrorChannel() <-chan error {
 // The logger will no longer function after this method has been called.
 func (al Alog) Stop() {
 	al.shutdownCh <- struct{}{}
-
 	<-al.shutdownCompleteCh
 }
 
