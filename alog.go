@@ -81,7 +81,7 @@ func (al Alog) shutdown() {
 }
 
 // MessageChannel returns a channel that accepts messages that should be written to the log.
-func (al Alog) MessageChannel() chan<- string {
+func (al Alog) MessageChannel() chan string {
 	return al.msgCh
 }
 
@@ -96,6 +96,7 @@ func (al Alog) ErrorChannel() <-chan error {
 // The logger will no longer function after this method has been called.
 func (al Alog) Stop() {
 	al.shutdownCh <- struct{}{}
+
 	<-al.shutdownCompleteCh
 }
 
